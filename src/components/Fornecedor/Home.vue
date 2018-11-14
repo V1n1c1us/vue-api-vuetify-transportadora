@@ -39,6 +39,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+        <AlertMessageCC msgSuccess="Sucesso" :alert="showAlert" @close="close"/>
+        
+        
                     <v-list two-line subheader  v-for="(item, index) in forn" :key="index">
                         <v-list-tile>
                             <v-list-tile-avatar>
@@ -75,40 +78,34 @@
                         </v-list-tile>
                         <v-divider inset></v-divider>
                     </v-list>
-                                                <CreateForm>
-                                    <v-btn
-                                    icon
-                                     slot="activator"
-                                     @click="$root.$emit('open-modal')"
-                                     >
-                                    <v-icon color="grey lighten-1">create</v-icon>
-                                </v-btn>
-                                </CreateForm>
                 </v-flex>
             </v-layout>
         </v-container>
     </div>
-    
 </template>
 <script>
-import CreateForm from './CreateForm'
+import AlertMessageCC from '../Alert/Alert'
 import axios from 'axios'
-import * as types from '@/store/types';
+import * as types from '@/store/types'
 export default {
     components: {
-        CreateForm
+        AlertMessageCC
     },
     data() {
         return {
             fornecedores: [],
             nome: null,
             cnpj: null,
-            dialog: false
+            dialog: false,
+            alert: false 
         }
     },
     computed: {
         forn() {
             return this.$store.getters[types.GETTER_SERVICE_PROVIDERS];
+        },
+        showAlert() {
+            return this.alert;
         }
     },
     mounted () {
@@ -118,9 +115,14 @@ export default {
         save () {
             const data = {nome: this.nome, cnpj: this.cnpj}
             this.$store.dispatch(types.ACTION_SAVE_SERVICE_PROVIDERS, data).then(data => {
-                console.log(data);
+                this.alert = true
                 this.dialog = false
+                this.nome = '';
+                this.cpnj = '';
             })
+        },
+        close(value) {
+            this.alert = value;
         }
     }
 }
